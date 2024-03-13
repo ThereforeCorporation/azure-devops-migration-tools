@@ -80,7 +80,7 @@
     },
     {
       "$type": "TfsUserMappingEnricherOptions",
-      "Enabled": true,
+      "Enabled": false,
       "UserMappingFile": "C:\\temp\\userExport.json",
       "IdentityFieldsToCheck": [
         "System.AssignedTo",

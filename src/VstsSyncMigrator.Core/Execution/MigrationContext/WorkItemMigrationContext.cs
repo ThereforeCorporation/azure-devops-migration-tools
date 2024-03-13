@@ -771,7 +771,6 @@ namespace VstsSyncMigrator.Engine
 
                     if (typeChange && workItemId > 0)
                     {
-                        ValidatePatTokenRequirement();
                         Uri collectionUri = Engine.Target.Config.AsTeamProjectConfig().Collection;
                         string token = Engine.Target.Config.AsTeamProjectConfig().PersonalAccessToken;
                         VssConnection connection = new VssConnection(collectionUri, new VssBasicCredential(string.Empty, token));
