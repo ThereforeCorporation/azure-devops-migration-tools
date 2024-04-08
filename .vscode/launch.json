@@ -10,7 +10,7 @@
             "request": "launch",
             "preLaunchTask": "build full framework",
             "program": "${workspaceFolder}/src/MigrationTools.ConsoleFull/bin/Debug/net472/migration.exe",
-            "args": ["execute", "-c", "configuration.json"],
+            "args": ["execute", "-c", "C:\\skripte\\migrate_wsi_pipes_testplans\\migrate_pipelines_of_theSource_myTool.json"],
             "cwd": "${workspaceFolder}/src/MigrationTools.ConsoleFull/bin/Debug/net472/",
             "console": "externalTerminal",
             "stopAtEntry": false

@@ -63,6 +63,14 @@ namespace MigrationTools.Endpoints
             return CreateHttpClientWithHeaders(baseUrl.Uri.AbsoluteUri.ToString(), "api-version=6.0");
         }
 
+        public HttpClient GetHttpClient()
+        {
+            UriBuilder baseUrl = new UriBuilder(Options.Organisation);
+            baseUrl.AppendPathSegments("_apis");
+    
+            return CreateHttpClientWithHeaders(baseUrl.Uri.AbsoluteUri.ToString(), "api-version=6.0");
+        }
+
         /// <summary>
         /// Create a new instance of HttpClient including Headers
         /// </summary>
@@ -98,7 +106,8 @@ namespace MigrationTools.Endpoints
             };
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(Encoding.ASCII.GetBytes(string.Format("{0}:{1}", "", Options.AccessToken))));
             client.DefaultRequestHeaders.Add("Accept", $"application/json; {versionParameter}");
-            //client.DefaultRequestHeaders.Add("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.2; .NET CLR 1.0.3705;)"); #1784
+            client.DefaultRequestHeaders.Add("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.2; .NET CLR 1.0.3705;)");
+
             return client;
         }
 
@@ -257,13 +266,43 @@ namespace MigrationTools.Endpoints
         /// <param name="rootDefinitions"></param>
         /// <param name="updatedDefinitions"></param>
         /// <returns>List of Mappings</returns>
-        public async Task<List<Mapping>> UpdateTaskGroupsAsync(IEnumerable<TaskGroup> targetDefinitions, IEnumerable<TaskGroup> rootDefinitions, IEnumerable<TaskGroup> updatedDefinitions)
+        public async Task<List<Mapping>> UpdateTaskGroupsAsync(IEnumerable<TaskGroup> targetDefinitions, IEnumerable<TaskGroup> rootDefinitions, IEnumerable<TaskGroup> updatedDefinitions, List<Mapping> mappings)
         {
             var migratedDefinitions = new List<Mapping>();
+
             foreach (var definitionToBeMigrated in updatedDefinitions)
             {
+                Console.WriteLine("Migrating Def: "+definitionToBeMigrated.Name);
+                Console.WriteLine("defninitions: "+definitionToBeMigrated.Id);
                 var relatedRootDefinition = rootDefinitions.FirstOrDefault(d => definitionToBeMigrated.Name == d.Name);
-                var taskGroupId = rootDefinitions.FirstOrDefault(d => definitionToBeMigrated.Name == d.Name).Id;
+
+                if (relatedRootDefinition == null)
+                {
+                    var idOfdefinitionToBeMigrated = definitionToBeMigrated.Id;
+                    var relatedRootDefinitionWithNewIdinTarget= mappings.FirstOrDefault(m => m.SourceId == idOfdefinitionToBeMigrated);
+
+                    if (relatedRootDefinitionWithNewIdinTarget != null) {
+                    var relatedRootDefinitionWithNewIdinTargetID =relatedRootDefinitionWithNewIdinTarget.TargetId;
+
+                    var relatedRootDefinitionBasedOnTargetId = rootDefinitions.FirstOrDefault(d => d.Id == relatedRootDefinitionWithNewIdinTargetID);
+
+                    Console.WriteLine("skipping " +definitionToBeMigrated.Name +" no relatedRootDefinition for name");
+                    Console.WriteLine("Verions: " + definitionToBeMigrated.Version.Major);
+
+                    if (relatedRootDefinitionBasedOnTargetId != null){
+                        Console.WriteLine("found " +relatedRootDefinitionBasedOnTargetId.Name +" with targetId "+relatedRootDefinitionBasedOnTargetId.Id);
+
+                        relatedRootDefinition = relatedRootDefinitionBasedOnTargetId;
+                       }
+                       else continue;
+                       
+                    }
+                    else continue;
+                    
+                }
+
+
+                var taskGroupId = relatedRootDefinition.Id;
                 definitionToBeMigrated.ParentDefinitionId = taskGroupId;
                 definitionToBeMigrated.Version.IsTest = true;
 
@@ -287,6 +326,8 @@ namespace MigrationTools.Endpoints
                 var responseContent = await result.Content.ReadAsStringAsync();
                 if (result.StatusCode != HttpStatusCode.OK)
                 {
+                      
+                    Log.LogError("first Error log");
                     Log.LogError("Error migrating {DefinitionType}: {DefinitionName}. Please migrate it manually. {ErrorText}", typeof(TaskGroup).Name, definitionToBeMigrated.Name, responseContent);
                     continue;
                 }
@@ -309,6 +350,7 @@ namespace MigrationTools.Endpoints
                     responseContent = await result.Content.ReadAsStringAsync();
                     if (result.StatusCode != HttpStatusCode.OK)
                     {
+                        Log.LogError("second Error log");
                         Log.LogError("Error migrating {DefinitionType}: {DefinitionName}. Please migrate it manually. {ErrorText}", typeof(TaskGroup).Name, definitionToBeMigrated.Name, responseContent);
                         continue;
                     }
@@ -337,6 +379,7 @@ namespace MigrationTools.Endpoints
                         responseContent = await result.Content.ReadAsStringAsync();
                         if (result.StatusCode != HttpStatusCode.OK)
                         {
+                            Log.LogError("third Error log");
                             Log.LogError("Error migrating {DefinitionType}: {DefinitionName}. Please migrate it manually. {ErrorText}", typeof(TaskGroup).Name, definitionToBeMigrated.Name, responseContent);
                             continue;
                         }
@@ -369,6 +412,8 @@ namespace MigrationTools.Endpoints
         {
             var migratedDefinitions = new List<Mapping>();
 
+            Log.LogError("Parentids:"+ parentIds.Length);
+
             foreach (var definitionToBeMigrated in definitionsToBeMigrated)
             {
                 var client = GetHttpClient<DefinitionType>(parentIds);
@@ -391,7 +436,8 @@ namespace MigrationTools.Endpoints
                 var responseContent = await result.Content.ReadAsStringAsync();
                 if (result.StatusCode != HttpStatusCode.OK && result.StatusCode != HttpStatusCode.Created)
                 {
-
+                    // Log.LogError("create api def");
+                    // Log.LogError(definitionToBeMigrated.ToString());
                     Log.LogError("Error migrating {DefinitionType}: {DefinitionName}. Please migrate it manually. \r\nUrl: POST {Url}\r\n{ErrorText}", typeof(DefinitionType).Name, definitionToBeMigrated.Name, result.RequestMessage.RequestUri.ToString(), responseContent);
                     continue;
                 }

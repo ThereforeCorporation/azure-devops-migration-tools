@@ -4,6 +4,19 @@ namespace MigrationTools.DataContracts
 {
     public abstract class RestApiDefinition
     {
+
+        public RestApiDefinition()
+        {
+            
+        }
+
+        public RestApiDefinition(string sId, string name, string id)
+        {
+            this.sId = sId;
+            Name = name;
+            Id = id;
+        }   
+
         private string sId;
         public virtual string Name { get; set; }
         public virtual string Id { get; set; }

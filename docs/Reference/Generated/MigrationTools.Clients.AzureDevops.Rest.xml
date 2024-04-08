@@ -58,7 +58,7 @@
             <param name="queryForDetails">a boolean flag to allow caller to skip the calls for each individual definition details</param>
             <returns></returns>
         </member>
-        <member name="M:MigrationTools.Endpoints.AzureDevOpsEndpoint.UpdateTaskGroupsAsync(System.Collections.Generic.IEnumerable{MigrationTools.DataContracts.Pipelines.TaskGroup},System.Collections.Generic.IEnumerable{MigrationTools.DataContracts.Pipelines.TaskGroup},System.Collections.Generic.IEnumerable{MigrationTools.DataContracts.Pipelines.TaskGroup})">
+        <member name="M:MigrationTools.Endpoints.AzureDevOpsEndpoint.UpdateTaskGroupsAsync(System.Collections.Generic.IEnumerable{MigrationTools.DataContracts.Pipelines.TaskGroup},System.Collections.Generic.IEnumerable{MigrationTools.DataContracts.Pipelines.TaskGroup},System.Collections.Generic.IEnumerable{MigrationTools.DataContracts.Pipelines.TaskGroup},System.Collections.Generic.List{MigrationTools.DataContracts.Mapping})">
             <summary>
             Make HTTP Request to add Revision / Version of Task Group
             </summary>
@@ -185,13 +185,12 @@
         </member>
         <member name="M:MigrationTools.Processors.AzureDevOpsPipelineProcessor.FilterOutExistingTaskGroups(System.Collections.Generic.IEnumerable{MigrationTools.DataContracts.Pipelines.TaskGroup},System.Collections.Generic.IEnumerable{MigrationTools.DataContracts.Pipelines.TaskGroup})">
             <summary>
-            Filter existing TaskGroups
             </summary>
             <param name="sourceDefinitions"></param>
             <param name="targetDefinitions"></param>
             <returns>List of filtered Definitions</returns>
         </member>
-        <member name="M:MigrationTools.Processors.AzureDevOpsPipelineProcessor.FilterOutIncompatibleTaskGroups(System.Collections.Generic.IEnumerable{MigrationTools.DataContracts.Pipelines.TaskGroup},System.Collections.Generic.IEnumerable{MigrationTools.DataContracts.Pipelines.TaskDefinition})">
+        <member name="M:MigrationTools.Processors.AzureDevOpsPipelineProcessor.FilterOutIncompatibleTaskGroups(System.Collections.Generic.IEnumerable{MigrationTools.DataContracts.Pipelines.TaskGroup},System.Collections.Generic.IEnumerable{MigrationTools.DataContracts.Pipelines.TaskDefinition},System.Collections.Generic.IEnumerable{MigrationTools.DataContracts.Pipelines.TaskDefinition},System.Collections.Generic.IEnumerable{MigrationTools.DataContracts.Pipelines.TaskGroup})">
             <summary>
             Filter incompatible TaskGroups
             </summary>

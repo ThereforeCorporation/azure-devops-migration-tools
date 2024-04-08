@@ -11,6 +11,41 @@ namespace MigrationTools.DataContracts.Pipelines
     [ApiName("Task Groups")]
     public partial class TaskGroup : RestApiDefinition
     {
+        public override string ToString()
+        {
+            return $"TaskGroup Information:\n" +
+                   $"  TaskGroupId: {TaskGroupId ?? "N/A"}\n" +
+                   $"  FriendlyName: {FriendlyName ?? "N/A"}\n" +
+                   $"  Description: {Description ?? "N/A"}\n" +
+                   $"  CreatedBy: {CreatedBy?.DisplayName ?? "N/A"}\n" +
+                   $"  CreatedOn: {CreatedOn}\n" +
+                   $"  ModifiedBy: {ModifiedBy?.DisplayName ?? "N/A"}\n" +
+                   $"  ModifiedOn: {ModifiedOn}\n" +
+                   $"  Version: {Version?.Major ?? 0}.{Version?.Minor ?? 0}.{Version?.Patch ?? 0}\n" +
+                   $"  IconUrl: {IconUrl ?? "N/A"}\n" +
+                   $"  Category: {Category ?? "N/A"}\n" +
+                   $"  DefinitionType: {DefinitionType ?? "N/A"}\n" +
+                   $"  Author: {Author ?? "N/A"}\n" +
+                   $"  Comment: {Comment ?? "N/A"}\n" +
+
+                   $"  Owner: {Owner ?? "N/A"}\n" +
+                   $"  ContentsUploaded: {ContentsUploaded}\n" +
+                   $"  PackageType: {PackageType ?? "N/A"}\n" +
+                   $"  PackageLocation: {PackageLocation ?? "N/A"}\n" +
+                   $"  SourceLocation: {SourceLocation ?? "N/A"}\n" +
+                   $"  MinimumAgentVersion: {MinimumAgentVersion ?? "N/A"}\n" +
+                   $"  HelpMarkDown: {HelpMarkDown ?? "N/A"}\n" +
+                   $"  Preview: {Preview}\n" +
+                   $"  ParentDefinitionId: {ParentDefinitionId ?? "N/A"}\n" +
+                   $"  TaskGroupRevision: {TaskGroupRevision}\n" +
+
+                   $"  Revision: {Revision}\n" +
+                   $"  SourceDef: {string.Join(", ", SourceDefinitions) ?? "N/A"}\n" +
+                   $"  Groups: {string.Join(", ", Groups) ?? "N/A"}\n" +
+                   $"  InstanceNameFormat: {InstanceNameFormat ?? "N/A"}\n";
+        }
+
+
         public string ParentDefinitionId { get; set; }
         public string TaskGroupId { get; set; }
         public long ParentDefinitionRevision { get; set; }
@@ -164,6 +199,11 @@ namespace MigrationTools.DataContracts.Pipelines
         public ExpandoObject Inputs { get; set; }
 
         public TaskTask Task { get; set; }
+        public override string ToString()
+{
+    return $"DisplayName: {DisplayName}\nAlwaysRun: {AlwaysRun}\nContinueOnError: {ContinueOnError}\nCondition: {Condition}\nEnabled: {Enabled}\nTimeoutInMinutes: {TimeoutInMinutes}\nInputs: {Inputs}\nTask: {Task}\n";
+}
+
     }
 
     public partial class TaskTask
@@ -173,6 +213,13 @@ namespace MigrationTools.DataContracts.Pipelines
         public string VersionSpec { get; set; }
 
         public string DefinitionType { get; set; }
+
+        public override string ToString()
+{
+    return $"Id: {Id}\nVersionSpec: {VersionSpec}\nDefinitionType: {DefinitionType}\n";
+}
+
+
     }
 
     public partial class Version

@@ -20,6 +20,7 @@ namespace MigrationTools.DataContracts.Pipelines
         public RetentionRule[] RetentionRules { get; set; }
 
         public ProcessParameters Properties { get; set; }
+        public string BuildNumberFormat { get; set; }
 
         public object[] Tags { get; set; }
 
@@ -276,6 +277,12 @@ namespace MigrationTools.DataContracts.Pipelines
     {
         public int Type { get; set; }
     }
+    public class ProjectList
+    {
+        public int Count { get; set; }
+        public List<Project> Value { get; set; }
+    }
+
 
     public partial class Project
     {
@@ -321,6 +328,11 @@ namespace MigrationTools.DataContracts.Pipelines
 
     public partial class Repository
     {
+        public Repository ()
+        {
+            Properties = new Properties();
+        }
+
         public Properties Properties { get; set; }
 
         public string Id { get; set; }
@@ -340,6 +352,10 @@ namespace MigrationTools.DataContracts.Pipelines
 
     public partial class Properties
     {
+        public Properties()
+        {
+            
+        }
         public string ConnectedServiceId { get; set; }
         public string CleanOptions { get; set; }
 

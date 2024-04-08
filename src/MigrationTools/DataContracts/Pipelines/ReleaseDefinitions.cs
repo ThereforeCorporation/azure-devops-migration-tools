@@ -51,7 +51,7 @@ namespace MigrationTools.DataContracts.Pipelines
             Source = "restApi";
             Revision = 1;
             Links = null;
-            Artifacts = null;
+            //Artifacts = null;
             Url = null;
             Links = null;
             Id = "0";
@@ -244,6 +244,8 @@ namespace MigrationTools.DataContracts.Pipelines
 
         public void ResetObject()
         {
+            DeploymentInput.ResetObject();
+            
             foreach (var workflowTask in WorkflowTasks)
             {
                 workflowTask.ResetObject();
@@ -272,6 +274,12 @@ namespace MigrationTools.DataContracts.Pipelines
         public string Condition { get; set; }
 
         public ProcessParameters OverrideInputs { get; set; }
+
+        public void ResetObject()
+        {
+            SkipArtifactsDownload = true;
+            ArtifactsDownloadInput = new ArtifactsDownloadInput();          
+        }
     }
 
     public partial class ArtifactsDownloadInput
@@ -384,6 +392,14 @@ namespace MigrationTools.DataContracts.Pipelines
         public string ExecutionOrder { get; set; }
     }
 
+    public partial class Approver
+    {
+        public string DisplayName { get; set; }
+        public string Descriptor { get; set; }
+        public string UniqueName { get; set; } 
+        public string Id { get; set; }
+    }
+
     public partial class Approval
     {
         public long Rank { get; set; }
@@ -393,6 +409,8 @@ namespace MigrationTools.DataContracts.Pipelines
         public bool IsNotificationOn { get; set; }
 
         public long Id { get; set; }
+
+        public Approver Approver {get; set;}
 
         public void ResetObject()
         {
