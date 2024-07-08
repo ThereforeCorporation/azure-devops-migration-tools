@@ -128,12 +128,12 @@ namespace MigrationTools.Endpoints
             var builder = new UriBuilder(Options.Organisation);
 
             var pathSplit = apiPathAttribute.Path.Split('?');
-            //string queryParts = "";
-            //if (pathSplit.Length > 1)
-            //{
-            //    // reassemble query string
-            //    queryParts = string.Join("?", pathSplit.Skip(1)).TrimStart('?');
-            //}
+            /* string queryParts = "";
+            if (pathSplit.Length > 1)
+            {
+               // reassemble query string
+               queryParts = string.Join("?", pathSplit.Skip(1)).TrimStart('?');
+            } */
 
             string unformatted = (apiPathAttribute.IncludeProject ? "/" + Options.Project : "") + "/_apis/" + pathSplit[0] + (apiPathAttribute.IncludeTrailingSlash ? "/" : "");
             builder.Path += Regex.IsMatch(unformatted, @"{\d}") ? string.Format(unformatted, routeParameters) : unformatted;
@@ -143,26 +143,37 @@ namespace MigrationTools.Endpoints
                 if (builder.Host.Contains("dev.azure.com"))
                 {
                     builder.Host = "vsrm." + builder.Host;
-                    builder.Query = "api-version=6.0";
+                    builder.Query = "api-version=6.0-preview.1";
                 }
                 else if (builder.Host.Contains("visualstudio.com"))
                 {
                     int num = builder.Host.IndexOf(".visualstudio.com");
                     builder.Host = builder.Host.Substring(0, num) + ".vsrm.visualstudio.com";
-                    builder.Query = "api-version=6.0";
+                    builder.Query = "api-version=6.0-preview.1";
                 }
                 else
                 {
-                    builder.Query = "api-version=5.1";
+                    builder.Query = "api-version=6.0-preview.4";
                 }
             }
             else if (apiNameAttribute.Name == "Service Connections")
             {
-                builder.Query = "api-version=5.1";
+                builder.Query = "api-version=5.0-preview.2";
+                //builder.Query = "api-version=6.0-preview.4";
+                
+            }
+            else if (apiNameAttribute.Name == "Variable Groups")
+            {
+                builder.Query = "api-version=6.0-preview.2";
+            }
+            else if (apiNameAttribute.Name == "Queues")
+            {
+                builder.Query = "api-version=6.0-preview.1";
             }
             else
             {
-                builder.Query = "api-version=6.0";
+               builder.Query = "api-version=6.0-preview";
+               // builder.Query = "";
             }
             return builder;
         }

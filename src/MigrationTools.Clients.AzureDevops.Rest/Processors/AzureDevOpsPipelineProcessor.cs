@@ -325,7 +325,7 @@ namespace MigrationTools.Processors
             var defaultBranch = "refs/heads/develop";
             var Id = "fakeID";
             var name = "Therefore";
-            var theSourceRepo = new GitRepository(null, null, new Uri("https://vie1tfs5-clone/Therefore/TheSource/_versionControl"), defaultBranch, false, false, "", name, Id);
+            var theSourceRepo = new GitRepository(null, null, new Uri("https://vie1tfs5/Therefore/TheSource/_versionControl"), defaultBranch, false, false, "", name, Id);
             // add it to Source Repos
             var list = sourceRepositories.ToList();
             list.Add(theSourceRepo);
@@ -349,7 +349,7 @@ namespace MigrationTools.Processors
             theSoureRepoBuildDefition.Properties.CleanOptions = "0";
             theSoureRepoBuildDefition.Properties.ConnectedServiceId = "null";
             theSoureRepoBuildDefition.Properties.EditableOptions = "null";
-            theSoureRepoBuildDefition.Properties.FetchDepth = 0;
+            theSoureRepoBuildDefition.Properties.FetchDepth = 1;
             theSoureRepoBuildDefition.Properties.GitLfsSupport = false;
             theSoureRepoBuildDefition.Properties.LabelSources = "0";
             theSoureRepoBuildDefition.Properties.LabelSourcesFormat = "$(build.buildNumber)";
@@ -363,7 +363,22 @@ namespace MigrationTools.Processors
                 {
                     definition.Repository = theSoureRepoBuildDefition;
                 }
+            }
 
+            foreach (var definition in definitionsToBeMigrated)
+            {
+                if (definition.Triggers != null && definition.Triggers.Length > 0)
+                {
+                    foreach (var trigger in definition.Triggers)
+                    {
+                        if (trigger.FirstOrDefault(x => x.Key == "triggerType").Value.ToString() == "continuousIntegration")
+                        {
+
+                            var dict = (IDictionary<string, object>)trigger;
+                            dict["branchFilters"] = new List<string> { "+refs/heads/develop" };
+                        }
+                    }
+                }
             }
 
 
@@ -537,9 +552,9 @@ namespace MigrationTools.Processors
                 UpdateServiceConnectionId(definitionToBeMigrated, ServiceConnectionMappings);
             }
 
-            var thereforeITProjectId = getProjectIdAsync("ThereforeIT").Result;
+            var TheSourceProjectId = getProjectIdAsync("TheSource").Result;
             var targetBuildDefinitions = await GetSelectedDefinitionsFromEndpointAsync<BuildDefinition>(Target, _Options.BuildPipelines);
-            
+
             //override artifact 
             foreach (var definitionToBeMigrated in definitionsToBeMigrated)
             {
@@ -553,14 +568,14 @@ namespace MigrationTools.Processors
                         artifact.SourceId = definition.Id;
                         artifact.Alias = "TB_Artifact";
                         artifact.Type = "Build";
-                        artifact.DefinitionReference.ArtifactSourceDefinitionUrl = new ArtifactSourceDefinitionUrl(); 
-                        artifact.DefinitionReference.Project.Name = "ThereforeIT";
-                        artifact.DefinitionReference.Project.Id = thereforeITProjectId;
+                        artifact.DefinitionReference.ArtifactSourceDefinitionUrl = new ArtifactSourceDefinitionUrl();
+                        artifact.DefinitionReference.Project.Name = "TheSource";
+                        artifact.DefinitionReference.Project.Id = TheSourceProjectId;
                         artifact.DefinitionReference.DefaultVersionType.Id = "latestType";
                         artifact.DefinitionReference.DefaultVersionType.Name = "Latest";
                         artifact.DefinitionReference.Definition.Name = artifactDefName;
                         artifact.DefinitionReference.Definition.Id = definition.Id;
-                    }          
+                    }
                 }
             }
             //remove artifact from environments
@@ -577,7 +592,7 @@ namespace MigrationTools.Processors
 
             } */
 
-            //var id = getProjectIdAsync("ThereforeIT").Result;
+            //var id = getProjectIdAsync("TheSource").Result;
 
             var mappings = await Target.CreateApiDefinitionsAsync<ReleaseDefinition>(definitionsToBeMigrated);
 
